@@ -1,34 +1,35 @@
-package calcuator;
 
-import javax.swing.JOptionPane;
+package calcuator;
 
 public class CalculatorEngine {
 
-	public boolean canPrint = true;
+    public double Calculate(double number1, double number2, String operator) {
 
-	// Addition logic
-	public double AddNumbers(double number1, double number2) {
-		return number1 + number2;
-	}
+        switch (operator) {
 
-	// Subraction Logic
-	public double SubractNumbers(double number1, double number2) {
-		return number1 - number2;
-	}
+            case "+":
+                return number1 + number2;
 
-	// Multiplication logic
-	public double MultiplyNumbers(double number1, double number2) {
-		return number1 * number2;
-	}
+            case "-":
+                return number1 - number2;
 
-	// Division Logic
-	public double DivideNumbers(double number1, double number2) {
-		if (number2 == 0) {
-			JOptionPane.showMessageDialog(null, "cannot divide by 0");
-			canPrint = false;
-			return 0;
-		}
-		return number1 / number2;
-	}
+            case "×":
+                return number1 * number2;
 
+            case "÷":
+                if (number2 == 0) {
+                    throw new ArithmeticException("Cannot divide by zero!");
+                }
+                return number1 / number2;
+
+            case "%":
+                if (number2 == 0) {
+                    throw new ArithmeticException("Cannot calculate remainder with zero!");
+                }
+                return number1 % number2;
+
+            default:
+                throw new IllegalArgumentException("Unknown operator: " + operator);
+        }
+    }
 }

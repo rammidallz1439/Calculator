@@ -1,117 +1,131 @@
+
 package calcuator;
 
 import javax.swing.JOptionPane;
 
-public class CalculatorValidator extends CalculatorEngine {
+public class CalculatorValidator {
 
-	double number1 = 0;
-	double number2 = 0;
-	String input;
+    private double number1 = 0;
+    private double number2 = 0;
+    private String input;
 
-	double result = 0.0;
+    private double result = 0.0;
+    private boolean continueCalculation = false;
 
-	boolean continueCalculation = false;
-	boolean isValid;
-	
+    private final CalculatorEngine engine = new CalculatorEngine();
 
-	//Takes Input from user
-	public void TakeInput() {
+    // Takes input from the user
+    public void TakeInput() {
 
-		do {
-			canPrint = true;
+        do {
 
-			// take the input for first numnber
-			input = JOptionPane.showInputDialog(null, "please give the first number");
-			if (input == null) {
-				return;
-			}
+            // Get the first number
+            input = JOptionPane.showInputDialog(
+                    null, "Please give the first number");
 
-			try {
-				number1 = Double.parseDouble(input);
-				isValid = true;
-			} catch (NumberFormatException e) {
-				isValid = false;
-			}
+            if (input == null) {
+                return;
+            }
 
-			while (!isValid) {
-				input = JOptionPane.showInputDialog(null, "please give a number not alphabets or any other symbol");
-				try {
-					number1 = Double.parseDouble(input);
-					isValid = true;
-				} catch (NumberFormatException e) {
-					isValid = false;
-				}
-			}
+            if (!IsValidNumber(input)) {
+                JOptionPane.showMessageDialog(
+                        null, "Please enter a valid number.");
+                continue;
+            }
 
-			// take input form second number
-			input = JOptionPane.showInputDialog(null, "please give the second number");
-			if (input == null) {
-				return;
-			}
+            number1 = Double.parseDouble(input);
 
-			try {
-				number2 = Double.parseDouble(input);
-				isValid = true;
-			} catch (NumberFormatException e) {
-				isValid = false;
-			}
+            // Get the second number
+            input = JOptionPane.showInputDialog(
+                    null, "Please give the second number");
 
-			while (!isValid) {
-				input = JOptionPane.showInputDialog(null, "please give a number not alphabets or any other symbol");
-				try {
-					number2 = Double.parseDouble(input);
-					isValid = true;
-				} catch (NumberFormatException e) {
-					isValid = false;
-				}
-			}
+            if (input == null) {
+                return;
+            }
 
-			// make the user to select a option from the list of enums
-			OperationType operation = (OperationType) JOptionPane.showInputDialog(null, "Select an operation",
-					"Calculator", JOptionPane.QUESTION_MESSAGE, null, OperationType.values(), OperationType.ADDITION);
+            if (!IsValidNumber(input)) {
+                JOptionPane.showMessageDialog(
+                        null, "Please enter a valid number.");
+                continue;
+            }
 
-			if (operation == null) {
-				return;
-			}
-			
-			ValidateInput(operation);
+            number2 = Double.parseDouble(input);
 
-		} while (continueCalculation);
-	}
+            // Select an operation
+            OperationType operation = (OperationType)
+                    JOptionPane.showInputDialog(
+                            null,
+                            "Select an operation",
+                            "Calculator",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            OperationType.values(),
+                            OperationType.ADDITION);
 
-	//Validates input 
-	public void ValidateInput(OperationType operation) {
+            if (operation == null) {
+                return;
+            }
 
-		// check the type of operation user want to perform
-		switch (operation) {
-		case OperationType.ADDITION:
-			result = AddNumbers(number1, number2);
-			break;
-		case OperationType.SUBRACTION:
-			result = SubractNumbers(number1, number2);
-			break;
-		case OperationType.MULTIPLICATION:
-			result = MultiplyNumbers(number1, number2);
-			break;
-		case OperationType.DIVISION:
-			result = DivideNumbers(number1, number2);
-			break;
-		default:
-			break;
-		}
+            ValidateInput(operation);
 
-		if (canPrint) {
-			JOptionPane.showMessageDialog(null, result);
-		}
+        } while (continueCalculation);
+    }
 
-		int choice = JOptionPane.showConfirmDialog(null, "Do you want to continue calculation?", "Confirmation",
-				JOptionPane.YES_NO_OPTION);
+    // Checks whether the input can be converted into a number
+    private boolean IsValidNumber(String input) {
 
-		if (choice == JOptionPane.YES_OPTION) {
-			continueCalculation = true;
-		} else {
-			continueCalculation = false;
-		}
-	}
+        try {
+            Double.parseDouble(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
+    // Validates the operation and displays the result
+    public void ValidateInput(OperationType operation) {
+
+        String operator;
+
+        switch (operation) {
+
+            case ADDITION:
+                operator = "+";
+                break;
+
+            case SUBRACTION:
+                operator = "-";
+                break;
+
+            case MULTIPLICATION:
+                operator = "×";
+                break;
+
+            case DIVISION:
+                operator = "÷";
+                break;
+
+            default:
+                return;
+        }
+
+        try {
+
+            result = engine.Calculate(number1, number2, operator);
+
+            JOptionPane.showMessageDialog(null, result);
+
+        } catch (ArithmeticException e) {
+
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        int choice = JOptionPane.showConfirmDialog(
+                null,
+                "Do you want to continue calculation?",
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION);
+
+        continueCalculation = (choice == JOptionPane.YES_OPTION);
+    }
 }
